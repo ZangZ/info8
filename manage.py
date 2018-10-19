@@ -1,9 +1,11 @@
 from flask import session
 from flask_script import Manager
-# 导入数据迁移
 from flask_migrate import Migrate, MigrateCommand
 from info import create_app,db
 import logging
+
+
+# manager.py是程序启动的入口，只关心启动的相关参数以及内容，不关心具体该如何创建相关逻辑
 
 app = create_app("development")
 manager = Manager(app)
@@ -12,15 +14,7 @@ Migrate(app, db)
 manager.add_command("db", MigrateCommand)
 
 
-@app.route('/')
-def index():
-    session["name"] = "itheima"
-    logging.debug("测试debug")
-    logging.warning("测试warning")
-    logging.error("测试error")
-    logging.fatal("测试fatal")
 
-    return 'index898465123'
 
 
 if __name__ == '__main__':

@@ -7,9 +7,11 @@ from flask_wtf import CSRFProtect
 from redis import StrictRedis
 from config import config
 import logging
-
+from info.modules.index import index_blu
 
 # 初始化数据库
+
+
 db = SQLAlchemy()
 
 
@@ -42,5 +44,7 @@ def create_app(config_name):  # create_app就类似于工厂方法
     CSRFProtect(app)
     # 设置session保存指定位置
     Session(app)
+    # 注册蓝图
+    app.register_blueprint(index_blu)
 
     return app
