@@ -4,6 +4,8 @@ from flask_wtf import CSRFProtect
 from redis import StrictRedis
 # 可以用来指定session的保存位置
 from flask_session import Session
+from flask_script import Manager
+
 
 
 
@@ -46,6 +48,10 @@ db = SQLAlchemy(app)
 redis_store = StrictRedis(host=Config.REDIS_HOST,port=Config.REDIS_PORT)
 # 开启当前项目CSRF保护
 CSRFProtect(app)
+# 设置session保存指定位置
+Session(app)
+
+manager = Manager(app)
 
 
 
@@ -56,5 +62,5 @@ def index():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    manager.run()
 
