@@ -8,16 +8,6 @@ from flask_script import Manager
 
 
 
-
-# from flask.ext.wtf import CSRFProtect
-# from redis import StrictRedis
-# from flask import Flask, session
-# from flask.ext.sqlalchemy import SQLAlchemy
-# 可以用来指定 session 保存的位置
-# from flask_session import Session
-# from flask_script import Manager
-
-
 class Config(object):
     """项目的配置"""
     DEBUG = True
