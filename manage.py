@@ -5,7 +5,8 @@ from redis import StrictRedis
 # 可以用来指定session的保存位置
 from flask_session import Session
 from flask_script import Manager
-
+# 导入数据迁移
+from flask_migrate import Migrate, MigrateCommand
 
 
 class Config(object):
@@ -48,6 +49,9 @@ CSRFProtect(app)
 Session(app)
 
 manager = Manager(app)
+Migrate(app, db)
+# 将迁移命令添加到manager中
+manager.add_command("db", MigrateCommand)
 
 
 @app.route('/')
