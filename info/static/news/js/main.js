@@ -154,7 +154,7 @@ var imageCodeId = ""
 function generateImageCode() {
     imageCodeId = generateUUID()
     //拼接url
-    var url = "/image_code?imageCodeId=" + imageCodeId
+    var url = "/passport/image_code?imageCodeId=" + imageCodeId
     // 给指定img标签设置src,设置了地址之后,img标签就会向这个地址发起请求,请求图片
     $(".get_pic_code").attr("src", url)
 }
