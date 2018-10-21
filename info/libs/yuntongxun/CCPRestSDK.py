@@ -266,6 +266,7 @@ class REST:
         try:
             res = urllib2.urlopen(req)
             data = res.read()
+            print(data.decode())
             res.close()
 
             if self.BodyType == 'json':
