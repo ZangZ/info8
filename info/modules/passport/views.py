@@ -16,6 +16,56 @@ from . import passport_blu
 from info.utils.captcha.captcha import captcha
 
 
+
+@passport_blu("/login", methods=["POST"])
+def login():
+    """
+    登录
+    1.获取数据
+    2.校验参数
+    3.校验密码是否正确
+    4.保存用户的登录状态
+    5.响应
+    :return:
+    """
+
+    # 1.获取参数
+    params_dict =   request.json
+    mobile = params_dict.get("mobile")
+    passport = params_dict.get("passport")
+
+    # 2.校验参数
+    if not all([mobile, passport]):
+        return jsonify(errno=RET.PARAMERR, errmsg="参数错误")
+
+    # 校验手机号是否正确
+    if not re.match("1[35678]\\d{9}", mobile):
+        return jsonify(errno=RET.PARAMERR, errmsg="手机号格式不正确")
+
+    # 3.校验密码是否正确
+    # 先查询出当前是否有指定手机号的用户
+    try:
+        user = User.query.filter(User.mobile == mobile).first()
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(errno=RET.DBERR,errmsg="数据查询错误")
+    # 判断用户是否存在
+    if not user:
+        return jsonify(errno=RET.NODATA, errmsg="用户不存在")
+
+    # 校验登录的密码和当前用户登录的密码是否一致
+    if not user.check_password(passport):
+        return jsonify(errno=RET.PWDERR, errmsg="用户名或者密码错误")
+
+    # 4.保存用户的登录状态
+    session["user_id"] =user.id
+    session["mobile"] = user.mobile
+    session["nick_name"] = user.nick_name
+
+    # 5.响应
+    return jsonify(errno=RET.OK, errmsg="登陆成功")
+
+
 @passport_blu.route("/register", methods=["POST"])
 def register():
     """
@@ -68,18 +118,18 @@ def register():
 
 
     # 6添加到数据库
-    # try:
-    #     db.session.add(user)
-    #     db.session.commit()
-    # except Exception as e:
-    #     current_app.logger.error(e)
-    #     db.session.rollback()
-    #     return jsonify(errno=RET.DBERR, errmsg="数据保存失败")
-    #
-    # # 往session中保存数据,表示当前已经登录
-    # session["user_id"] = user.id
-    # session["mobile"] = user.mobile
-    # session["nick_name"] = user.nick_name
+    try:
+        db.session.add(user)
+        db.session.commit()
+    except Exception as e:
+        current_app.logger.error(e)
+        db.session.rollback()
+        return jsonify(errno=RET.DBERR, errmsg="数据保存失败")
+
+    # 往session中保存数据,表示当前已经登录
+    session["user_id"] = user.id
+    session["mobile"] = user.mobile
+    session["nick_name"] = user.nick_name
 
 
     # 7返回响应
@@ -124,10 +174,10 @@ def send_sms_code():
     sms_code_str = "%06d" % random.randint(0, 999999)
     current_app.logger.debug("短信验证码内容是:%s" % sms_code_str)
     # 6发送短信验证码
-    # result = CCP().send_template_sms(mobile, [sms_code_str, constants.SMS_CODE_REDIS_EXPIRES / 5], "1")
-    # if result != 0:
-    #     # 代表发送不成功
-    #     return jsonify(errno=RET.THIRDERR, errmsg="发送短信失败")
+    result = CCP().send_template_sms(mobile, [sms_code_str, constants.SMS_CODE_REDIS_EXPIRES / 5], "1")
+    if result != 0:
+        # 代表发送不成功
+        return jsonify(errno=RET.THIRDERR, errmsg="发送短信失败")
 
     # 保存验证码内容到redis
     try:
