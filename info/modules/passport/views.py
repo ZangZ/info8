@@ -64,18 +64,18 @@ def register():
     # TODO 对密码做加密处理
 
     # 6添加到数据库
-    try:
-        db.session.add(user)
-        db.session.commit()
-    except Exception as e:
-        current_app.logger.error(e)
-        db.session.rollback()
-        return jsonify(errno=RET.DBERR, errmsg="数据保存失败")
-
-    # 往session中保存数据,表示当前已经登录
-    session["user_id"] = user.id
-    session["mobile"] = user.mobile
-    session["nick_name"] = user.nick_name
+    # try:
+    #     db.session.add(user)
+    #     db.session.commit()
+    # except Exception as e:
+    #     current_app.logger.error(e)
+    #     db.session.rollback()
+    #     return jsonify(errno=RET.DBERR, errmsg="数据保存失败")
+    #
+    # # 往session中保存数据,表示当前已经登录
+    # session["user_id"] = user.id
+    # session["mobile"] = user.mobile
+    # session["nick_name"] = user.nick_name
 
 
     # 7返回响应
@@ -120,10 +120,10 @@ def send_sms_code():
     sms_code_str = "%06d" % random.randint(0, 999999)
     current_app.logger.debug("短信验证码内容是:%s" % sms_code_str)
     # 6发送短信验证码
-    result = CCP().send_template_sms(mobile, [sms_code_str, constants.SMS_CODE_REDIS_EXPIRES / 5], "1")
-    if result != 0:
-        # 代表发送不成功
-        return jsonify(errno=RET.THIRDERR, errmsg="发送短信失败")
+    # result = CCP().send_template_sms(mobile, [sms_code_str, constants.SMS_CODE_REDIS_EXPIRES / 5], "1")
+    # if result != 0:
+    #     # 代表发送不成功
+    #     return jsonify(errno=RET.THIRDERR, errmsg="发送短信失败")
 
     # 保存验证码内容到redis
     try:
@@ -156,6 +156,7 @@ def get_image_code():
 
     # 3. 生成图片验证码
     name, text, image = captcha.generate_captcha()
+    current_app.logger.debug("图片验证码内容是: %s " % text)
 
     # 4. 保存图片验证码文字内容到redis
     try:
