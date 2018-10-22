@@ -62,6 +62,10 @@ def register():
     # 记录用户最后一次登录时间
     user.last_login = datetime.now()
     # TODO 对密码做加密处理
+    # 需求:在设置 password 的时候,去对password进行加密,并且将加密结果给 user.password_hasj 赋值
+    user.password = password
+    print(user.password_hash)
+
 
     # 6添加到数据库
     # try:
