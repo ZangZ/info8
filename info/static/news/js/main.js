@@ -66,7 +66,7 @@ $(function(){
 	$('.to_login').click(function(){
 		$('.login_form_con').show();
 		$('.register_form_con').hide();
-	})main.css
+	})
 
 	// 根据地址栏的hash值来显示用户中心对应的菜单
 	var sHash = window.location.hash;
@@ -266,6 +266,16 @@ function sendSMSCode() {
         }
     })
 }
+
+function logout() {
+    $.get('/passport/logout', function (resp) {
+        location.reload()
+
+    })
+}
+
+
+
 
 // 调用该函数模拟点击左侧按钮
 function fnChangeMenu(n) {
