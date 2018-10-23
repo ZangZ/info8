@@ -1,9 +1,11 @@
 from logging.handlers import RotatingFileHandler
+from urllib import response
 
 from flask import Flask, logging
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import CSRFProtect
+from flask_wtf.csrf import generate_csrf
 from redis import StrictRedis
 from config import config
 import logging
@@ -44,9 +46,23 @@ def create_app(config_name):  # create_app就类似于工厂方法
     global redis_store
     redis_store = StrictRedis(host=config[config_name].REDIS_HOST, port=config[config_name].REDIS_PORT,decode_responses=True)
     # 开启当前项目 CSRF 保护，只做服务器验证功能
-    # CSRFProtect(app)
+    CSRFProtect(app)
     # 设置session保存指定位置
+    # 帮我们做了:从cookie中取出随机值,从表单中取出随机值,然后进行校验,并且响应校验结果
+    # 我们需要做:1.在界面加载的时候,往cookie中添加一个csrf_token,并且在表单中添加一个隐藏的csrf_token
+    # 在响应里设置cookie,很多地方都需要设置cookie,使用钩子函数:after_response
+    # 我们现在登录或注册不是使用表单,而是使用ajax,所以需要在ajax请求的时候带上csrf_token
     Session(app)
+
+    @app.after_request
+    def after_resquest(response):
+        csrf_token = generate_csrf()  # 生成随机的csrf_token值
+        # 设置一个cookie
+        response.set_cookie("csrf_token", csrf_token)
+        return response
+
+
+
     # 注册蓝图
     # 注册蓝图时,什么时候注册,什么时候导入
     from info.modules.index import index_blu
