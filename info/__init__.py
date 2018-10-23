@@ -12,7 +12,7 @@ import logging
 
 
 # 初始化数据库
-
+from info.utils.common import do_index_class
 
 db = SQLAlchemy()
 
@@ -53,6 +53,9 @@ def create_app(config_name):  # create_app就类似于工厂方法
     # 在响应里设置cookie,很多地方都需要设置cookie,使用钩子函数:after_response
     # 我们现在登录或注册不是使用表单,而是使用ajax,所以需要在ajax请求的时候带上csrf_token
     Session(app)
+
+    # 添加自定一过滤器
+    app.add_template_filter(do_index_class, "index_class")
 
     @app.after_request
     def after_resquest(response):
