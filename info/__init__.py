@@ -55,7 +55,9 @@ def create_app(config_name):  # create_app就类似于工厂方法
     Session(app)
 
     # 添加自定一过滤器
+    # app.add_template_filter(do_index_class, "index_class")
     app.add_template_filter(do_index_class, "index_class")
+
 
     @app.after_request
     def after_resquest(response):

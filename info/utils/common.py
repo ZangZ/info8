@@ -1,13 +1,10 @@
-# 自定义共用的工具类
-
 def do_index_class(index):
-    """返回指定索引对应的类名"""
-
-    if index == 1:
+    """自定义过滤器，过滤点击排序html的class"""
+    if index == 0:
         return "first"
-    elif index == 2:
+    elif index == 1:
         return "second"
-    elif index == 3:
-        return  "third"
-
-    return ""
+    elif index == 2:
+        return "third"
+    else:
+        return ""
