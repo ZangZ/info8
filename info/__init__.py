@@ -76,4 +76,7 @@ def create_app(config_name):  # create_app就类似于工厂方法
     from info.modules.passport import passport_blu
     app.register_blueprint(passport_blu)
 
+    from info.modules.news import news_blu
+    app.register_blueprint(news_blu)
+
     return app
