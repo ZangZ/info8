@@ -13,6 +13,7 @@ $(function(){
 
     // 收藏
     $(".collection").click(function () {
+
         var params = {
             "news_id": $(this).attr('data-newid'),
             "action": "collect"
@@ -39,7 +40,7 @@ $(function(){
                 }
             }
         })
-       
+
     })
 
     // 取消收藏
@@ -70,10 +71,10 @@ $(function(){
                 }
             }
         })
-     
+
     })
 
-        // 评论提交
+    // 评论提交
     $(".comment_form").submit(function (e) {
         e.preventDefault();
         var news_id = $(this).attr('data-newsid')
@@ -160,7 +161,7 @@ $(function(){
             if(sHandler.indexOf('has_comment_up')>=0)
             {
                 // 如果当前该评论已经是点赞状态，再次点击会进行到此代码块内，代表要取消点赞
-                 action = "remove"
+                action = "remove"
             }
 
             var comment_id = $(this).attr("data-commentid")
@@ -180,11 +181,22 @@ $(function(){
                 success: function (resp) {
                     if (resp.errno == "0") {
                         // 更新点赞按钮图标
+                        var like_count = $this.attr('data-likecount')
+                        // 更新点赞按钮图标
                         if (action == "add") {
+                            like_count = parseInt(like_count) + 1
                             // 代表是点赞
                             $this.addClass('has_comment_up')
                         }else {
+                            like_count = parseInt(like_count) - 1
                             $this.removeClass('has_comment_up')
+                        }
+                        // 更新点赞数据
+                        $this.attr('data-likecount', like_count)
+                        if (like_count == 0) {
+                            $this.html("赞")
+                        }else {
+                            $this.html(like_count)
                         }
                     }else if (resp.errno == "4101"){
                         $('.login_form_con').show();
