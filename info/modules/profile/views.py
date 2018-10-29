@@ -2,34 +2,89 @@ from flask import g, request, jsonify, current_app
 from flask import redirect
 from flask import render_template
 
-from info import constants
-from info.models import Category
+from info import constants, db
+from info.models import Category, News
 from info.modules.profile import profile_blu
 from info.utils.common import user_login_data
 from info.utils.image_storage import storage
 from info.utils.response_code import RET
 
-
-@profile_blu.route('/news_release')
+@profile_blu.route('/news_release', methods=["get", "post"])
+@user_login_data
 def news_release():
 
-    # 加载新闻分类数据
-    categories = []
+    if request.method == "GET":
+        # 加载新闻分类数据
+        categories = []
+        try:
+            categories = Category.query.all()
+        except Exception as e:
+            current_app.logger.error(e)
+
+        category_dict_li = []
+        for category in categories:
+            category_dict_li.append(category.to_dict())
+
+        # 移除最新的分类
+        category_dict_li.pop(0)
+
+        return render_template('news/user_news_release.html', data={"categories": category_dict_li})
+
+    # 1. 获取要提交的数据
+    # 标题
+    title = request.form.get("title")
+    # 新闻来源
+    source = "个人发布"
+    # 摘要
+    digest = request.form.get("digest")
+    # 新闻内容
+    content = request.form.get("content")
+    # 索引图片
+    index_image = request.files.get("index_image")
+    # 分类id
+    category_id = request.form.get("category_id")
+
+    # 校验参数
+    # 2.1 判断数据是否有值
+    if not all([title, source, digest, content, index_image, category_id]):
+        return jsonify(errno=RET.PARAMERR, errmsg="参数有误")
+
+    # 2.2
     try:
-        categories = Category.query.all()
+        category_id = int(category_id)
     except Exception as e:
         current_app.logger.error(e)
+        return jsonify(errno=RET.PARAMERR, errmsg="参数有误")
 
-    category_dict_li = []
-    for category in categories:
-        category_dict_li.append(category.to_dict())
+    # 3.取到图片，将图片上传到七牛云
+    try:
+        index_image_data = index_image.read()
+        # 上传到七牛云
+        key = storage(index_image_data)
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(errno=RET.PARAMERR, errmsg="参数有误")
 
-    # 移除最新的分类
-    category_dict_li.pop(0)
+    news = News()
+    news.title = title
+    news.digest = digest
+    news.source = source
+    news.content = content
+    news.index_image_url = constants.QINIU_DOMIN_PREFIX + key
+    news.category_id = category_id
+    news.user_id = g.user.id
+    # 1代表待审核状态
+    news.status = 1
 
-    return render_template('news/user_news_release.html', data={"categories": category_dict_li})
+    try:
+        db.session.add(news)
+        db.session.commit()
+    except Exception as e:
+        current_app.logger.error(e)
+        db.session.rollback()
+        return jsonify(errno=RET.DBERR, errmsg="数据保存失败")
 
-
+    return jsonify(errno=RET.OK, errmsg="OK")
 
 
 @profile_blu.route('/collection')
