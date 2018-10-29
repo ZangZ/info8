@@ -13,6 +13,8 @@ from info.utils.common import user_login_data
 from info.utils.response_code import RET
 
 
+
+
 @news_blu.route('/comment_like', methods=["POST"])
 @user_login_data
 def comment_like():
@@ -60,6 +62,7 @@ def comment_like():
             comment_like_model.user_id = user.id
             comment_like_model.comment_id = comment.id
             db.session.add(comment_like_model)
+            # 更新点赞次数
             comment.like_count += 1
     else:
         # 取消点赞评论
@@ -67,6 +70,7 @@ def comment_like():
                                                       CommentLike.comment_id == comment.id).first()
         if comment_like_model:
             db.session.delete(comment_like_model)
+            # 更新点赞次数
             comment.like_count -= 1
 
     try:
