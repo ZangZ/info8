@@ -21,6 +21,7 @@ def login():
         is_admin = session.get("is_admin", False)
         if user_id and is_admin:
             return redirect(url_for('admin.index'))
+        """url_for:可以以视图函数名称作为参数,返回对应的网址,还可用于加载静态文件"""
         return render_template('admin/login.html')
 
     # 取到登录的参数
