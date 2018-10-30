@@ -1,7 +1,7 @@
 from logging.handlers import RotatingFileHandler
 from urllib import response
 
-from flask import Flask, logging
+from flask import Flask, logging, g, render_template
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import CSRFProtect
@@ -9,7 +9,6 @@ from flask_wtf.csrf import generate_csrf
 from redis import StrictRedis
 from config import config
 import logging
-
 
 
 
@@ -59,6 +58,14 @@ def create_app(config_name):  # create_app就类似于工厂方法
     # 添加自定一过滤器
     # app.add_template_filter(do_index_class, "index_class")
     app.add_template_filter(do_index_class, "index_class")
+    from info.utils.common import user_login_data
+
+    @app.errorhandler(404)
+    @user_login_data
+    def page_not_fount(e):
+        user = g.user
+        data = {"user": user.to_dict() if user else None}
+        return render_template('news/404.html', data=data)
 
 
     @app.after_request
