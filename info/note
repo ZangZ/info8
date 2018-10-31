@@ -10,3 +10,4 @@ bug:新闻详情页进入个人中心bug
     新闻发布页参数有误bug
     新闻审核同意bug(非调试模式无效)
     window.location 是什么作用,再去了解一下
+    ajaxSubmit请求了解一下
