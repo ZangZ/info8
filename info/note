@@ -14,3 +14,7 @@ bug:新闻详情页进入个人中心bug
     ajaxSubmit请求了解一下
     # if 当前新闻有作者，并且 当前登录用户已关注过这个用户
         if news.user and user:
+    # 获取页数
+        p = request.args.get("p", 1)
+
+    关注列表有无签名的样式bug
