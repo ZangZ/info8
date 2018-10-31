@@ -9,6 +9,14 @@ from info.utils.common import user_login_data
 from info.utils.image_storage import storage
 from info.utils.response_code import RET
 
+@profile_blu.route('/other_info')
+@user_login_data
+def other_info():
+    data = {"user": g.user.to_dict() if g.user else None}
+    return render_template('news/other.html', data=data)
+
+
+
 @profile_blu.route('/user_follow')
 @user_login_data
 def user_follow():
