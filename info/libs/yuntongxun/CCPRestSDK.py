@@ -16,6 +16,8 @@ import datetime
 from urllib import request as urllib2
 import json
 from .xmltojson import xmltojson
+import ssl
+ssl.match_hostname = lambda cert, hostname: True
 
 
 class REST:
