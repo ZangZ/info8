@@ -1,8 +1,8 @@
 from qiniu import Auth, put_data
 
-access_key = "yV4GmNBLOgQK-1Sn3o4jktGLFdFSrlywR2C-hvsW"
-secret_key = "bixMURPL6tHjrb8QKVg2tm7n9k8C7vaOeQ4MEoeW"
-bucket_name = "ihome"
+access_key = "84GPGTqGIIgRA6N72fuSEp7oqSn_tJTY_Iqgz0UB"
+secret_key = "7eGge9bJVssjH2CaGHu2w6Dckd1C4hdEWGO_qmT8"
+bucket_name = "zanguncle"
 
 # TODO access_key 和 bucket_name 不能用
 

@@ -71,6 +71,9 @@ def news_release():
 
         return render_template('news/user_news_release.html', data={"categories": category_dict_li})
 
+
+    user = g.user
+
     # 1. 获取要提交的数据
     # 标题
     title = request.form.get("title")
@@ -116,6 +119,8 @@ def news_release():
     news.user_id = g.user.id
     # 1代表待审核状态
     news.status = 1
+    if user.is_admin == 1:
+        news.status = 0
 
     try:
         db.session.add(news)
