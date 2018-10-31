@@ -12,3 +12,5 @@ bug:新闻详情页进入个人中心bug
     管理员新闻编辑页面也无法稳定响应
     window.location 是什么作用,再去了解一下
     ajaxSubmit请求了解一下
+    # if 当前新闻有作者，并且 当前登录用户已关注过这个用户
+        if news.user and user:
